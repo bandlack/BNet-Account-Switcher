@@ -56,14 +56,14 @@ Start_Script() {
 	global BNetSettingsRegEx := {}
 
 	ProgramValues.Name 					:= "BNet Account Switcher"
-	ProgramValues.Version 				:= "0.1.1"
+	ProgramValues.Version 				:= "0.1.2"
 	ProgramValues.Branch 				:= "master"
 	ProgramValues.Github_User 			:= "lemasato"
 	ProgramValues.GitHub_Repo 			:= "BNet-Account-Switcher"
 
 	ProgramValues.GitHub 				:= "https://github.com/" ProgramValues.Github_User "/" ProgramValues.GitHub_Repo
-	ProgramValues.Reddit 				:= ""
-	ProgramValues.Blizzard 				:= ""
+	ProgramValues.Reddit 				:= "https://www.reddit.com/user/lemasato/submitted/"
+	; ProgramValues.Blizzard 				:= ""
 	ProgramValues.Paypal 				:= "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KUTP3PG7GY756"
 
 	ProgramValues.Local_Folder 			:= A_MyDocuments "\AutoHotkey\" ProgramValues.Name
@@ -329,9 +329,9 @@ GUI_BNetLogin() {
 	Gui, BNetLogin:Add, Link,% "x" leftMost+5 " y" guiHeight-20 " hwndhLINK_GitHub gGitHub_Link",% "<a href="""">GitHub</a>"
 	Gui, BNetLogin:Add, Text,% "x+5 yp hwndhTEXT_Separator1",-
 	Gui, BNetLogin:Add, Link,% "x+5 yp hwndhLINK_Reddit gReddit_Link",% "<a href="""">Reddit</a>"
-	Gui, BNetLogin:Add, Text,% "x+5 yp hwndhTEXT_Separator2",-
-	Gui, BNetLogin:Add, Link,% "x+5 yp hwndhLINK_Blizzard gBlizzard_Link",% "<a href="""">Blizzard</a>"
-	moveEm := [hLINK_GitHub, hTEXT_Separator1, hLINK_Reddit, hTEXT_Separator2, hLINK_Blizzard]
+	; Gui, BNetLogin:Add, Text,% "x+5 yp hwndhTEXT_Separator2",-
+	; Gui, BNetLogin:Add, Link,% "x+5 yp hwndhLINK_Blizzard gBlizzard_Link",% "<a href="""">Blizzard</a>"
+	moveEm := [hLINK_GitHub, hTEXT_Separator1, hLINK_Reddit] ; ,hTEXT_Separator2, hLINK_Blizzard]
 	Loop moveEm.MaxIndex() {
 		coords := Get_Control_Coords("BNetLogin", moveEm[A_Index])
 		GuiControl, BNetLogin:Move,% moveEm[A_Index],% "y" guiHeight-(coords.H+borderSize)
