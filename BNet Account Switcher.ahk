@@ -56,7 +56,7 @@ Start_Script() {
 	global BNetSettingsRegEx := {}
 
 	ProgramValues.Name 					:= "BNet Account Switcher"
-	ProgramValues.Version 				:= "0.1"
+	ProgramValues.Version 				:= "0.1.1"
 	ProgramValues.Branch 				:= "master"
 	ProgramValues.Github_User 			:= "lemasato"
 	ProgramValues.GitHub_Repo 			:= "BNet-Account-Switcher"
@@ -325,6 +325,7 @@ GUI_BNetLogin() {
 																	; Once launcher is closed, remove the acc from the list then redraw GUI
 
 	Gui, BNetLogin:Add, Checkbox,% "x" leftMost+5 " y+15 vCB_DisableAutoStart hwndhCB_DisableAutoStart Checked" disableAutoStart " gGUI_BNetLogin_OnCBToggle",Disable automatic start
+	Gui, BNetLogin:Add, Text,% "x" leftMost+5 " y" guiHeight-40 " hwndhTEXT_Version",% "v" ProgramValues.Version
 	Gui, BNetLogin:Add, Link,% "x" leftMost+5 " y" guiHeight-20 " hwndhLINK_GitHub gGitHub_Link",% "<a href="""">GitHub</a>"
 	Gui, BNetLogin:Add, Text,% "x+5 yp hwndhTEXT_Separator1",-
 	Gui, BNetLogin:Add, Link,% "x+5 yp hwndhLINK_Reddit gReddit_Link",% "<a href="""">Reddit</a>"
@@ -333,8 +334,9 @@ GUI_BNetLogin() {
 	moveEm := [hLINK_GitHub, hTEXT_Separator1, hLINK_Reddit, hTEXT_Separator2, hLINK_Blizzard]
 	Loop moveEm.MaxIndex() {
 		coords := Get_Control_Coords("BNetLogin", moveEm[A_Index])
-		GuiControl, BNetLogin:Move,% moveEm[A_Index],% "y" guiHeight-(coords.H-borderSize)
+		GuiControl, BNetLogin:Move,% moveEm[A_Index],% "y" guiHeight-(coords.H+borderSize)
 	}
+	GuiControl, BNetLogin:Move,% hTEXT_Version,% "y" guiHeight-((coords.H*3)+borderSize)
 	; Gui, BNetLogin:Add, Button,% "x" leftMost " y" guiHeight-29 " w" rightMost " h30 hwndhBTN_CheckUpdate gGUI_BNetLogin_OnUpdateCheck",Check for updates
 	Gui, BNetLogin:Add, Picture,% "x" leftMost " y" guiHeight-50 " hwndhBTN_Donate gPaypal_Link",% ProgramValues.Resources_Folder "\Donate_PayPal.png"
 	coords := Get_Control_Coords("BNetLogin", hBTN_Donate)
@@ -426,7 +428,7 @@ GUI_BNetLogin_AddAccount() {
 	global ProgramValues
 
 	Gui, BNetLogin:+OwnDialogs
-	InputBox, email, Adding an account, Input the new account's email:, , 300, 150
+	InputBox, email, Adding an account,Remember to tick the "Remember password" case if you want to log in automatically without inputting your password.`n`nInput the new account's email:, , 400, 180
 	if (!ErrorLevel && Is_Email(email)) {
 		accNames := Parse_BNet_Config("SavedAccountNames")
 		Set_BNet_Config("SavedAccountNames", accNames "," email)
@@ -435,7 +437,7 @@ GUI_BNetLogin_AddAccount() {
 		GUI_BNetLogin()
 	}
 	else if (!ErrorLevel && !Is_Email(email)) {
-		MsgBox, %email% is not a valid email address.
+		MsgBox,4096,% ProgramValues.Name,%email% is not a valid email address.
 		GUI_BNetLogin_AddAccount()
 	}
 }
@@ -457,14 +459,15 @@ GUI_BNetLogin_RemoveAccount() {
 .			"`n`nBy choosing ""Yes"", we will log you on the account then ask you to choose ""Disconnect"" from within Blizzard App (this will delete the cookie)."
 	IfMsgBox, Yes
 	{
-		SplashTextOn, 650, 65, Instructions - Removing an account,% "We are now logging you on the account."
-		.															 "`nOnce the Blizzard App has started, click on the Blizzard logo on the top left and choose ""Disconnect""."
-		.															 "`nThe tool will resume once you completely close the Blizzard App."
+		SplashTextOn("Instructions - Removing an account","We are now logging you on the account."
+		.												 "`nOnce the Blizzard App has started, click on the Blizzard logo on the top left and choose ""Disconnect""."
+		.												 "`nThe tool will resume once you completely close the Blizzard App.")
+		WinWait,% "Instructions - Removing an account ahk_pid " DllCall("GetCurrentProcessId")
 		WinSet, Transparent, 200,% "Instructions - Removing an account ahk_pid " DllCall("GetCurrentProcessId")
 		GUI_BNetLogin_Login_Func(user, "")
 		Process, Wait, Battle.net.exe
 		Process, WaitClose, Battle.net.exe
-		SplashTextOff
+		SplashTextOff()
 		GoSub GUI_BNetLogin_RemoveAccount_EditConfig
 		GUI_BNetLogin_SaveSettings()
 		GUI_BNetLogin()
@@ -529,8 +532,8 @@ GUI_BNetLogin_SaveSettings() {
 
 	GUI_BNetLogin_Submit()
 	
-	IniWrite,% """" BNetLogin_Submit.EDIT_BNetLauncher """",% iniFile, SETTINGS,Launcher
-	IniWrite,% BNetLogin_Submit.CB_DisableAutoStart,% iniFile, SETTINGS,Disable_AutoStart
+	Set_Local_Config("SETTINGS", "Launcher", """" BNetLogin_Submit.EDIT_BNetLauncher """")
+	Set_Local_Config("SETTINGS", "Disable_AutoStart", BNetLogin_Submit.CB_DisableAutoStart)
 
 	bNetLauncher := Parse_BNet_Config("Path")
 	if (bNetLauncher != BNetLogin_Submit.EDIT_BNetLauncher) && FileExist(BNetLogin_Submit.EDIT_BNetLauncher) {
@@ -820,10 +823,19 @@ Set_BNet_Login(email) {
 Create_Local_File() {
 	global ProgramValues
 
+	sect := "PROGRAM"
+	keysAndValues := {	Last_Update_Check:"1994042612310000"}
+
+	for iniKey, iniValue in keysAndValues {
+		currentValue := Get_Local_Config(sect, iniKey)
+		if (currentValue = "ERROR") {
+			Set_Local_Config(sect, iniKey, iniValue)
+		}
+	}
+
 	sect := "SETTINGS"
 	keysAndValues := { 	Launcher:""""""
-						,Disable_AutoStart:"0"
-						,Last_Update_Check:"1994042612310000"}
+						,Disable_AutoStart:"0"}
 
 	for iniKey, iniValue in keysAndValues {
 		currentValue := Get_Local_Config(sect, iniKey)
@@ -928,9 +940,16 @@ Get_Local_Config(sect, key) {
 ;											Splash text
 ;==================================================================================================================
 
-SplashTextOn(title, msg) {
+SplashTextOn(title, msg, waitForClose=false, useSpaceToClose=false) {
 	global SPACEBAR_WAIT
-	SPACEBAR_WAIT := true
+
+	if (useSpaceToClose) {
+		SPACEBAR_WAIT := true
+		msg .= "`n`nPress [ Space ] to close this window."
+	}
+	else {
+		SPACEBAR_WAIT := false
+	}
 
 	Gui, Splash:Destroy
 	Gui, Splash:+AlwaysOnTop -SysMenu +hwndhGUISplash
@@ -944,7 +963,8 @@ SplashTextOn(title, msg) {
 
 	Gui, Splash:Show,% "w" coords.W+10 " h" coords.H+5,% title
 	WinWait, ahk_id %hGUISplash%
-	WinWaitClose, ahk_id %hGUISplash%
+	if (waitForClose)
+		WinWaitClose, ahk_id %hGUISplash%
 }
 
 SplashTextOff() {
@@ -961,7 +981,7 @@ SplashTextOff() {
 UpdateCheck(force=false, prompt=false) {
 	global ProgramValues, SPACEBAR_WAIT
 
-	lastUpdateCheck := Get_Local_Config("SETTINGS", "Last_Update_Check")
+	lastUpdateCheck := Get_Local_Config("PROGRAM", "Last_Update_Check")
 	if (force) ; Fake the last update check, so it's higher than 35mins
 		lastUpdateCheck := 1994042612310000
 
@@ -971,19 +991,17 @@ UpdateCheck(force=false, prompt=false) {
 	if !(timeDif > 35) ; Hasn't been longer than 35mins since last check, cancel to avoid spamming GitHub API
 		Return
 
-	IniWrite,% A_Now,% ProgramValues.Ini_File, SETTINGS, Last_Update_Check
+	Set_Local_Config("PROGRAM", "Last_Update_Check", A_Now)
 
-	releaseInfos := GetLatestRelease_Infos(gitUser, gitRepo)
+	releaseInfos := GetLatestRelease_Infos(ProgramValues.Github_User, ProgramValues.Github_Repo)
 	onlineVer := releaseInfos.name
-	onlineDownload := releaseInfos.browser_download_url
+	onlineDownload := releaseInfos.assets.1.browser_download_url
 
 	if (prompt) {
 		if (!onlineVer || !onlineDownload) {
 			SplashTextOn(ProgramValues.Name " - Updating Error", "There was an issue when retrieving the latest release from GitHub API"
 			.											"`nIf this keeps on happening, please try updating manually."
-			.											"`nYou can find the GitHub repository link in the ""Opts"" tab."
-			.											"`n"
-			.											"`nPress [ Space ] to close this window.")
+			.											"`nYou can find the GitHub repository link in the ""Opts"" tab.", 1, 1)
 		}
 		else if (onlineVer && onlineDownload) && (onlineVer != ProgramValues.Version) {
 			ShowUpdatePrompt(onlineVer, onlineDownload)
@@ -1084,7 +1102,7 @@ Run_Updater(downloadLink) {
 
 	updaterLink 		:= ProgramValues.Updater_Link
 
-	IniWrite,% A_Now,% ProgramValues.Ini_File,PROGRAM,LastUpdate
+	Set_Local_Config("PROGRAM", "LastUpdate", A_Now)
 	Run,% ProgramValues.Updater_File 
 	. " /Name=""" ProgramValues.Name  """"
 	. " /File_Name=""" A_ScriptDir "\" ProgramValues.Name ".exe" """"

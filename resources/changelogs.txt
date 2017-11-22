@@ -1,2 +1,13 @@
-v0.1 (21 Dec 2017):
-	Initially published on Github
+v0.1.1 (22 Dec 2017):
+	Added:
+	- Current version num in the Opts tab.
+	
+	Changes:
+	- Improved the email InputBox text.
+	
+	Fixes:
+	- Update checking would not work as it should.
+	
+
+v0.1 (22 Dec 2017):
+	- Initially published on Github
