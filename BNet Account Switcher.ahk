@@ -1147,5 +1147,5 @@ Exit_Func(ExitReason, ExitCode) {
 #Include lib/third-party/Class ImageButton.ahk
 #Include lib/third-party/JSON.ahk
 #Include lib/third-party/LV_SetSelColors.ahk
-#Include lib/ReleasesInfos.ahk
+#Include lib/GitHubReleasesAPI.ahk
 #Include lib/FileDownload.ahk
