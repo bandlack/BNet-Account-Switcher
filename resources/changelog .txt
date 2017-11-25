@@ -1,9 +1,15 @@
+v0.2.2 (25 Dec 2017)
+
+	Fixes:
+	- Typo fix in the "Remove selected account" message box.
 -----------------------
 v0.2.1 (25 Dec 2017)
+
 	Changes:
 	- The auto-updater executable would not be deleted after updating.
 -----------------------
 v0.2 (25 Dec 2017)
+
 	Changes:
 	- New icon for the application.
 	
@@ -11,6 +17,7 @@ v0.2 (25 Dec 2017)
 	- User could choose "Remove selected account" without any account selected.
 -----------------------
 v0.1.2 (22 Dec 2017)
+
 	Added:
 	- Reddit text link URL.
 	
@@ -19,6 +26,7 @@ v0.1.2 (22 Dec 2017)
 	
 -----------------------
 v0.1.1 (22 Dec 2017):
+
 	Added:
 	- Current version num in the Opts tab.
 	
