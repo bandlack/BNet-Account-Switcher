@@ -63,7 +63,6 @@ Start_Script() {
 
 	ProgramValues.GitHub 				:= "https://github.com/" ProgramValues.Github_User "/" ProgramValues.GitHub_Repo
 	ProgramValues.Reddit 				:= "https://www.reddit.com/user/lemasato/submitted/"
-	; ProgramValues.Blizzard 				:= ""
 	ProgramValues.Paypal 				:= "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KUTP3PG7GY756"
 
 	ProgramValues.Local_Folder 			:= A_MyDocuments "\AutoHotkey\" ProgramValues.Name
@@ -76,8 +75,6 @@ Start_Script() {
 	ProgramValues.Updater_File 			:= ProgramValues.Local_Folder "/BNet-AC-Updater.exe"
 	ProgramValues.Temporary_Name		:= ProgramValues.Local_Folder "/BNet-AC-NewVersion.exe"
 	ProgramValues.Updater_Link 			:= "https://raw.githubusercontent.com/" ProgramValues.Github_User "/" ProgramValues.GitHub_Repo "/master/Updater_v2.exe"
-	; ProgramValues.Version_Link 			:= "https://raw.githubusercontent.com/lemasato/BNet-Account-Switcher/master/Version.txt"
-	; ProgramValues.Changelogs_Link		:= "https://raw.githubusercontent.com/lemasato/BNet-Account-Switcher/master/Changelogs.txt"
 
 	ProgramValues.PID 					:= DllCall("GetCurrentProcessId")
 
@@ -315,18 +312,12 @@ GUI_BNetLogin() {
 	Gui, BNetLogin:Add, Edit, x+5 yp-2 w265 vEDIT_BNetLauncher hwndhEDIT_BNetLauncher R1,% bNetLauncher
 	Gui, BNetLogin:Add, Button, x+5 w35 h25 hwndhBTN_BrowseApp gGUI_BNetLogin_BrowseLauncher, O
 
-	; Gui, BNetLogin:Add, Button,% "x" leftMost+5 " y+15" " w150 h30 gGUI_BNetLogin_AddAccount",Add an Account ; Show InputBox asking for the email then redraw GUI
-	; Gui, BNetLogin:Add, Button,% "xp" " y+5" " wp hp gGUI_BNetLogin_RemoveAccount",Remove an Account ; Show Msgbox telling the user to log to the account and choose to disconnect then close the BNet Launcher
-																	; Once launcher is closed, remove the acc from the list then redraw GUI
-
 	Gui, BNetLogin:Add, Checkbox,% "x" leftMost+5 " y+15 vCB_DisableAutoStart hwndhCB_DisableAutoStart Checked" disableAutoStart " gGUI_BNetLogin_OnCBToggle",Disable automatic start
 	Gui, BNetLogin:Add, Text,% "x" leftMost+5 " y" guiHeight-40 " hwndhTEXT_Version",% "v" ProgramValues.Version
 	Gui, BNetLogin:Add, Link,% "x" leftMost+5 " y" guiHeight-20 " hwndhLINK_GitHub gGitHub_Link",% "<a href="""">GitHub</a>"
 	Gui, BNetLogin:Add, Text,% "x+5 yp hwndhTEXT_Separator1",-
 	Gui, BNetLogin:Add, Link,% "x+5 yp hwndhLINK_Reddit gReddit_Link",% "<a href="""">Reddit</a>"
-	; Gui, BNetLogin:Add, Text,% "x+5 yp hwndhTEXT_Separator2",-
-	; Gui, BNetLogin:Add, Link,% "x+5 yp hwndhLINK_Blizzard gBlizzard_Link",% "<a href="""">Blizzard</a>"
-	moveEm := [hLINK_GitHub, hTEXT_Separator1, hLINK_Reddit] ; ,hTEXT_Separator2, hLINK_Blizzard]
+	moveEm := [hLINK_GitHub, hTEXT_Separator1, hLINK_Reddit]
 	Loop moveEm.MaxIndex() {
 		coords := Get_Control_Coords("BNetLogin", moveEm[A_Index])
 		GuiControl, BNetLogin:Move,% moveEm[A_Index],% "y" guiHeight-(coords.H+borderSize)
@@ -617,7 +608,7 @@ GUI_BNetLogin_OnLvSelect(CtrlHwnd, GuiEvent, EventInfo) {
 	disableAutoStart := (disableAutoStart="ERROR")?(0):(disableAutoStart)
 
 	Gui, %A_Gui%:+OwnDialogs
-	isFirstTime := True
+	isFirstTime := True ; Always move to the next tab
 
 	if GuiEvent in Normal,D,I,K
 	{
@@ -631,6 +622,7 @@ GUI_BNetLogin_OnLvSelect(CtrlHwnd, GuiEvent, EventInfo) {
 	if (GuiEvent = "RightClick") {
 		LV_RightClick := true
 		GoSub %A_ThisFunc%_Get_Selected
+
 		try Menu, RClickMenu, DeleteAll
 		Menu, RClickMenu, Add, Add a new account, GUI_BNetLogin_AddAccount
 		Menu, RClickMenu, Add, Remove selected account, GUI_BNetLogin_RemoveAccount
@@ -655,7 +647,9 @@ GUI_BNetLogin_OnLvSelect(CtrlHwnd, GuiEvent, EventInfo) {
 
 		isEmail := Is_Email(accountName)
 		if (!isEmail) {
-			; LV_Modify(rowID, "-Select")
+			LV_Modify(rowID, "-Select")
+			BNetLogin_Values.User := 
+			accountName := 
 			Return
 		}
 		LV_Modify(rowID, "+Select")
