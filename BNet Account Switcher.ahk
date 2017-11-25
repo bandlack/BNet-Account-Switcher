@@ -56,7 +56,7 @@ Start_Script() {
 	global BNetSettingsRegEx := {}
 
 	ProgramValues.Name 					:= "BNet Account Switcher"
-	ProgramValues.Version 				:= "0.2"
+	ProgramValues.Version 				:= "0.2.1"
 	ProgramValues.Branch 				:= "master"
 	ProgramValues.Github_User 			:= "lemasato"
 	ProgramValues.GitHub_Repo 			:= "BNet-Account-Switcher"
@@ -99,7 +99,6 @@ Start_Script() {
 		}
 	}
 ;	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 
 ;	Startup
 	Tray_Refresh()
@@ -834,7 +833,9 @@ Create_Local_File() {
 	global ProgramValues
 
 	sect := "PROGRAM"
-	keysAndValues := {	Last_Update_Check:"1994042612310000"}
+	keysAndValues := {	Last_Update_Check:"1994042612310000"
+						,FileName:A_ScriptName
+						,PID:ProgramValues.PID}
 
 	for iniKey, iniValue in keysAndValues {
 		currentValue := Get_Local_Config(sect, iniKey)
@@ -1006,6 +1007,9 @@ UpdateCheck(force=false, prompt=false) {
 
 	if !(timeDif > 35) ; Hasn't been longer than 35mins since last check, cancel to avoid spamming GitHub API
 		Return
+
+	if FileExist(ProgramValues.Updater_File)
+		FileDelete,% ProgramValues.Updater_File
 
 	Set_Local_Config("PROGRAM", "Last_Update_Check", A_Now)
 

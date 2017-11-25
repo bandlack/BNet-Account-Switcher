@@ -1,4 +1,8 @@
 -----------------------
+v0.2.1 (25 Dec 2017)
+	Changes:
+	- The auto-updater executable would not be deleted after updating.
+-----------------------
 v0.2 (25 Dec 2017)
 	Changes:
 	- New icon for the application.
