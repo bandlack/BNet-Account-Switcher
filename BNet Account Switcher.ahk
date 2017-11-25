@@ -828,6 +828,12 @@ Create_Local_File() {
 
 	for iniKey, iniValue in keysAndValues {
 		currentValue := Get_Local_Config(sect, iniKey)
+
+		if (iniKey = "Last_Update_Check") { ; Make sure value is time format
+			EnvAdd, currentValue, 1, Seconds
+			if !(currentValue) || (currentValue = 1)
+				currentValue := "ERROR"
+		}
 		if (currentValue = "ERROR") {
 			Set_Local_Config(sect, iniKey, iniValue)
 		}
