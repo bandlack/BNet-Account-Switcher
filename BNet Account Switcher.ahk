@@ -232,63 +232,59 @@ GUI_BNetLogin() {
 	ImageButton.Create(hBTN_None, Style_WhiteButton*)
 	BNetLogin_Games.None := hBTN_None
 
+	; Games Icons
 	gameIconW := 48, gameIconH := 48
 	firstRowY := TAB_HEIGHT+10+30+10
 	xpos := 0, ypos := firstRowY
 	thisRow := 0
-	; Games Icons
-	Loop, 3 {
-		outterIndex := A_Index
-		Loop, Files,% ProgramValues.Game_Icons_Folder "\*.png"
-		{
-			; First loop, we get ico files count
-			if (outterIndex = 1) {
-				gameIconsNum++
-				remainingIcons := gameIconsNum
-			}
-			; Second loop, we calculate the space between icons
-			else if (outterIndex = 2 && A_Index = 1) {
-				spaceBetweenIcons := (guiWidth/gameIconsNum)
-				gameIconsPerRow := gameIconsNum
-				maxGameIconsPerRow := 6
+	gameIcons := []
+		; Loop through the icon files
+	Loop, Files,% ProgramValues.Game_Icons_Folder "\*.png"
+	{
+		gameIconsNum++
+		remainingIcons := gameIconsNum
+		gameIcons.Push(A_LoopFileFullPath)
+	}
 
-				While (gameIconsPerRow > maxGameIconsPerRow) { ; So that icons do not overlap
-					gameIconsPerRow := (gameIconsPerRow)?(gameIconsPerRow-1):(gameIconsNum-1)
-					spaceBetweenIcons := (guiWidth/gameIconsPerRow)
-				}
-				firstIconX := (guiWidth-(spaceBetweenIcons*(gameIconsPerRow-1)+gameIconW))/2 ; We retrieve the blank space after the lastest icon in the row
-																							 ; then divide this space in two so icons are centered
-			}
-			; Third loop, we create and position the buttons
-			else if (outterIndex = 3) {
-				Style_GameButton := [[0, A_LoopFileFullPath, , , , "White"] ; normal
-				,[0, A_LoopFileFullPath, , , ,"0xdddfdd"] ; hover
-				,[0, A_LoopFileFullPath, , , ,"0x8fddfa"] ; press
-				,[0, A_LoopFileFullPath, , , ,"0x8fddfa"]] ; default
+		; Calculate the space between each
+	spaceBetweenIcons := (guiWidth/gameIconsNum)
+	gameIconsPerRow := gameIconsNum
+	maxGameIconsPerRow := 6
 
-				thisRow++
-				if (thisRow > gameIconsPerRow) { ; Draw a new row
-					thisRow := 1, ypos += 55
-					divider := (remainingIcons <= gameIconsPerRow)?(remainingIcons):(gameIconsPerRow) ; Caculate the divider, so we can center the new row
-					firstIconX := (guiWidth-(spaceBetweenIcons*(divider-1)+gameIconW))/2 ; Same thing as the firstIconX above
-				}
-				xpos := (thisRow=1)?(firstIconX)
-					   :(xpos+spaceBetweenIcons)
-				ypos := (!ypos)?(firstRowY):(ypos)
+	While (gameIconsPerRow > maxGameIconsPerRow) { ; So that icons do not overlap
+		gameIconsPerRow := (gameIconsPerRow)?(gameIconsPerRow-1):(gameIconsNum-1)
+		spaceBetweenIcons := (guiWidth/gameIconsPerRow)
+	}
+	firstIconX := (guiWidth-(spaceBetweenIcons*(gameIconsPerRow-1)+gameIconW))/2 ; We retrieve the blank space after the lastest icon in the row
+																				 ;	then divide this space in two so icons are centered
+		; Create the game icon buttons
+	Loop % gameIcons.MaxIndex() {
+		this_gameIcon := gameIcons[A_Index]
 
-				Gui, BNetLogin:Add, Button, x%xpos% y%ypos% w%gameIconW% h%gameIconH% hwndhBTN_Games%A_Index% gGUI_BNetLogin_OnGameSelect
-				SplitPath, A_LoopFileName, , , , fileNameNoExt
-				fileNameNoUnderspace := StrReplace(fileNameNoExt, "_", " ")
-				AddToolTip(hBTN_Games%A_Index%, fileNameNoUnderspace)
-				ImageButton.Create(hBTN_Games%A_Index%, Style_GameButton*)
+		Style_GameButton := [[0, this_gameIcon, , , , "White"] ; normal
+			,[0, this_gameIcon, , , ,"0xdddfdd"] ; hover
+			,[0, this_gameIcon, , , ,"0x8fddfa"] ; press
+			,[0, this_gameIcon, , , ,"0x8fddfa"]] ; default
 
-				SplitPath, A_LoopFileName, , , , fileNameNoExt
-				gameName := StrReplace(fileNameNoExt, A_Space, "_")
-				BNetLogin_Games[gameName] := hBTN_Games%A_Index%
-
-				remainingIcons--
-			}
+		thisRow++
+		if (thisRow > gameIconsPerRow) { ; Draw a new row
+			thisRow := 1, ypos += 55
+			divider := (remainingIcons <= gameIconsPerRow)?(remainingIcons):(gameIconsPerRow) ; Caculate the divider, so we can center the new row
+			firstIconX := (guiWidth-(spaceBetweenIcons*(divider-1)+gameIconW))/2 ; Same thing as the firstIconX above
 		}
+		xpos := (thisRow=1)?(firstIconX)
+			   :(xpos+spaceBetweenIcons)
+		ypos := (!ypos)?(firstRowY):(ypos)
+
+		Gui, BNetLogin:Add, Button, x%xpos% y%ypos% w%gameIconW% h%gameIconH% hwndhBTN_Games%A_Index% gGUI_BNetLogin_OnGameSelect
+		SplitPath, this_gameIcon, , , , fileNameNoExt
+		fileNameNoUnderspace := StrReplace(fileNameNoExt, "_", " ")
+		AddToolTip(hBTN_Games%A_Index%, fileNameNoUnderspace)
+		ImageButton.Create(hBTN_Games%A_Index%, Style_GameButton*)
+
+		BNetLogin_Games[fileNameNoExt] := hBTN_Games%A_Index%
+
+		remainingIcons--
 	}
 
 	Gui, BNetLogin:Font, S8, Segoe UI
