@@ -432,7 +432,7 @@ GUI_BNetLogin_AddAccount() {
 	global ProgramValues
 
 	Gui, BNetLogin:+OwnDialogs
-	InputBox, email, Adding an account,Remember to tick the "Remember password" case if you want to log in automatically without inputting your password.`n`nInput the new account's email:, , 400, 180
+	InputBox, email, Adding an account,Remember to tick the "Keep me logged in" case if you want to log in automatically without inputting your password.`n`nInput the new account's email:, , 400, 180
 	if (!ErrorLevel && Is_Email(email)) {
 		accNames := Parse_BNet_Config("SavedAccountNames")
 		Set_BNet_Config("SavedAccountNames", accNames "," email)
