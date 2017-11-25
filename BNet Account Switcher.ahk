@@ -56,7 +56,7 @@ Start_Script() {
 	global BNetSettingsRegEx := {}
 
 	ProgramValues.Name 					:= "BNet Account Switcher"
-	ProgramValues.Version 				:= "0.1.2"
+	ProgramValues.Version 				:= "0.2"
 	ProgramValues.Branch 				:= "master"
 	ProgramValues.Github_User 			:= "lemasato"
 	ProgramValues.GitHub_Repo 			:= "BNet-Account-Switcher"

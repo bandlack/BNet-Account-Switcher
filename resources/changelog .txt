@@ -1,4 +1,11 @@
 -----------------------
+v0.2 (25 Dec 2017)
+	Changes:
+	- New icon for the application.
+	
+	Fixes:
+	- User could choose "Remove selected account" without any account selected.
+-----------------------
 v0.1.2 (22 Dec 2017)
 	Added:
 	- Reddit text link URL.
@@ -19,4 +26,4 @@ v0.1.1 (22 Dec 2017):
 
 -----------------------
 v0.1 (22 Dec 2017):
-	- Initially published on Github
+	- Initially published on Github.
