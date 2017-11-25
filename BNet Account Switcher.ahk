@@ -170,7 +170,7 @@ GUI_BNetLogin() {
 
 	; Default GUI Settings
 	Gui, BNetLogin:Destroy
-	Gui, BNetLogin:+AlwaysOnTop -Border -SysMenu -Caption +hwndhGUIBNetLogin
+	Gui, BNetLogin:+AlwaysOnTop -Border -SysMenu -Caption +hwndhGUIBNetLogin +LabelGUI_BNetLogin_
 	Gui, BNetLogin:Margin, 0, 0
 	Gui, BNetLogin:Default ; Neccessary for LV_ functions
 	Gui, BNetLogin:Color, White
@@ -379,6 +379,11 @@ GUI_BNetLogin() {
 	GUI_BNetLogin_Login:
 		GUI_BNetLogin_Login_Func()
 	Return
+
+	GUI_BNetLogin_Close:
+	;	The user closed the menu from its start bar icon
+		ExitApp
+	Return
 }
 
 GUI_BNetLogin_OnUpdateCheck(CtrlHwnd) {
@@ -443,9 +448,14 @@ GUI_BNetLogin_AddAccount() {
 }
 
 GUI_BNetLogin_RemoveAccount() {
-	global BNetLogin_Values
+	global BNetLogin_Values, ProgramValues
 
 	user := BNetLogin_Values.User
+	if !Is_Email(user) {
+		MsgBox,4096,% ProgramValues.Name,%email% is not a valid email address.
+		Return
+	}
+
 
 	Gui, BNetLogin:+OwnDialogs
 	guiName := "BNetRemoveAcc"
