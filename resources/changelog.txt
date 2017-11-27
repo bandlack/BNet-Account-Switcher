@@ -1,12 +1,25 @@
+-----------------------
+v0.3 (27 Dec 2017)
+
+	Added:
+	- Compatibility for Destiny 2 and StarCraft Remastered.
+	
+	Fixes:
+	- The "Accounts" tab would not be highlighted after successfully adding an account through the "Add an account" menu item.
+	- The version text in the Opts tab could be wrongly positioned under specific circumstance.
+	
+-----------------------
 v0.2.2 (25 Dec 2017)
 
 	Fixes:
 	- Typo fix in the "Remove selected account" message box.
+	
 -----------------------
 v0.2.1 (25 Dec 2017)
 
 	Changes:
 	- The auto-updater executable would not be deleted after updating.
+	
 -----------------------
 v0.2 (25 Dec 2017)
 
@@ -15,6 +28,7 @@ v0.2 (25 Dec 2017)
 	
 	Fixes:
 	- User could choose "Remove selected account" without any account selected.
+	
 -----------------------
 v0.1.2 (22 Dec 2017)
 
