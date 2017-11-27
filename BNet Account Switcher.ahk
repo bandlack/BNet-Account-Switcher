@@ -314,11 +314,11 @@ GUI_BNetLogin() {
 	Gui, BNetLogin:Add, Text,% "x+5 yp hwndhTEXT_Separator1",-
 	Gui, BNetLogin:Add, Link,% "x+5 yp hwndhLINK_Reddit gReddit_Link",% "<a href="""">Reddit</a>"
 	moveEm := [hLINK_GitHub, hTEXT_Separator1, hLINK_Reddit]
-	Loop moveEm.MaxIndex() {
+	Loop % moveEm.MaxIndex() {
 		coords := Get_Control_Coords("BNetLogin", moveEm[A_Index])
 		GuiControl, BNetLogin:Move,% moveEm[A_Index],% "y" guiHeight-(coords.H+borderSize)
 	}
-	GuiControl, BNetLogin:Move,% hTEXT_Version,% "y" guiHeight-((coords.H*3)+borderSize)
+	GuiControl, BNetLogin:Move,% hTEXT_Version,% "y" guiHeight-((coords.H*2)+borderSize)
 	; Gui, BNetLogin:Add, Button,% "x" leftMost " y" guiHeight-29 " w" rightMost " h30 hwndhBTN_CheckUpdate gGUI_BNetLogin_OnUpdateCheck",Check for updates
 	Gui, BNetLogin:Add, Picture,% "x" leftMost " y" guiHeight-50 " hwndhBTN_Donate gPaypal_Link",% ProgramValues.Resources_Folder "\Donate_PayPal.png"
 	coords := Get_Control_Coords("BNetLogin", hBTN_Donate)
@@ -345,6 +345,7 @@ GUI_BNetLogin() {
 	Gui, BNetLogin:Add, Button,% "x" leftMost " y" guiHeight-29 " w" guiWidth " h" 30 " hwndhBTN_Login gGUI_BNetLogin_Login",Login
 	ImageButton.Create(hBTN_Login, Style_SystemButton*)
 	BNetLogin_Handles.BTN_Login := hBTN_Login
+
 
 	GUI_BNetLogin_OnTabSelect(hBTN_TabAccount)
 	; GUI_BNetLogin_OnTabSelect(hBTN_TabGames)
@@ -413,8 +414,9 @@ GUI_BNetLogin_OnUpdateCheck(CtrlHwnd) {
 }
 
 GUI_BNetLogin_AddAccount() {
-	global ProgramValues
-
+	global ProgramValues, LV_RightClick
+	LV_RightClick := false
+	
 	Gui, BNetLogin:+OwnDialogs
 	InputBox, email, Adding an account,Remember to tick the "Keep me logged in" case if you want to log in automatically without inputting your password.`n`nInput the new account's email:, , 400, 180
 	if (!ErrorLevel && Is_Email(email)) {
@@ -437,7 +439,8 @@ GUI_BNetLogin_AddAccount() {
 }
 
 GUI_BNetLogin_RemoveAccount() {
-	global BNetLogin_Values, ProgramValues
+	global BNetLogin_Values, ProgramValues, LV_RightClick
+	LV_RightClick := false
 
 	user := BNetLogin_Values.User
 	if !Is_Email(user) {
