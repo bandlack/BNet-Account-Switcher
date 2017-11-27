@@ -77,19 +77,19 @@ Close_Program_Instancies() {
 	SplitPath, fileNameAndPath, , fileNameAndPath
 	fileNameAndPath := fileNameAndPath "\" fileName
 
-	executables := programPID "|" fileNameAndPath
-	Loop, Parse, executables, D|
-	{
-		Process, Close,% A_LoopField
-		Process, WaitClose,% A_LoopField
-		Sleep 1
-
-		SplitPath, A_LoopField, fileExt, , fileExt
-		if (fileExt = "exe") {
-			FileDelete,% A_LoopField
-		}
+	if (programPID && programPID != "ERROR") {
+		Process, Close,% programPID
+		Process, WaitClose,% programPID
 		Sleep 1
 	}
+
+	if (fileName && fileName != "ERROR") {
+		SplitPath, fileName, , , fileNameExt
+		if (fileNameExt = "exe")
+			FileDelete,% fileNameAndPath
+		Sleep 1
+	}
+	Sleep 1
 }
 
 Download_New_Version() {
