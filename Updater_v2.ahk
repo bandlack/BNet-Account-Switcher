@@ -1,3 +1,12 @@
+/*
+	Version: 2.0.1
+
+	v2.0.1 (27 Nov 2017)
+		Fix: Only use FileDelete on .exe files.
+		Fix: The FileName key from the ini file only stores the file name.
+				Since the updater file is not always located in the same folder as the script,
+				we retrieve the script path from the /File_Name* parameter then add this path to the variable retrieved from the FileName ini key.
+*/
 #NoEnv
 #Persistent
 #SingleInstance Force
@@ -64,7 +73,11 @@ Close_Program_Instancies() {
 	IniRead, programPID,% ProgramValues.Ini_File,PROGRAM,PID
 	IniRead, fileName,% ProgramValues.Ini_File,PROGRAM,FileName
 
-	executables := programPID "|" fileName
+	fileNameAndPath := ProgramValues.File_Name
+	SplitPath, fileNameAndPath, , fileNameAndPath
+	fileNameAndPath := fileNameAndPath "\" fileName
+
+	executables := programPID "|" fileNameAndPath
 	Loop, Parse, executables, D|
 	{
 		Process, Close,% A_LoopField
@@ -72,8 +85,9 @@ Close_Program_Instancies() {
 		Sleep 1
 
 		SplitPath, A_LoopField, fileExt, , fileExt
-		if (fileExt != "ahk")
+		if (fileExt = "exe") {
 			FileDelete,% A_LoopField
+		}
 		Sleep 1
 	}
 }
