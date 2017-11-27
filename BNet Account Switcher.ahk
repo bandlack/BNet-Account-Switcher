@@ -108,7 +108,7 @@ Start_Script() {
 
 ;	Exiting
 	Tray_Refresh()
-	ExitApp
+	; ExitApp
 }
 
 ;==================================================================================================================
@@ -235,18 +235,33 @@ GUI_BNetLogin() {
 	xpos := 0, ypos := firstRowY
 	thisRow := 0
 	gameIcons := []
+
+		; Get game IDs
+	allGameIDS := Get_Game_ID("all")
+	gameNamesList := 
+	for gameName, gameID in allGameIDS {
+		gameNamesList .= "," gameName
+	}
+	StringTrimLeft, gameNamesList, gameNamesList, 1
+	gameName := gameID :=
+
 		; Loop through the icon files
 	Loop, Files,% ProgramValues.Game_Icons_Folder "\*.png"
 	{
-		gameIconsNum++
-		remainingIcons := gameIconsNum
-		gameIcons.Push(A_LoopFileFullPath)
+		SplitPath, A_LoopFileName, , , , fileNameNoExt
+		if fileNameNoExt in %gameNamesList%
+		{
+			gameIconsNum++
+			remainingIcons := gameIconsNum
+			gameIcons.Push(A_LoopFileFullPath)
+		}
 	}
+	fileNameNoExt :=
 
 		; Calculate the space between each
 	spaceBetweenIcons := (guiWidth/gameIconsNum)
 	gameIconsPerRow := gameIconsNum
-	maxGameIconsPerRow := 6
+	maxGameIconsPerRow := 5
 
 	While (gameIconsPerRow > maxGameIconsPerRow) { ; So that icons do not overlap
 		gameIconsPerRow := (gameIconsPerRow)?(gameIconsPerRow-1):(gameIconsNum-1)
@@ -283,25 +298,6 @@ GUI_BNetLogin() {
 
 		remainingIcons--
 	}
-
-	Gui, BNetLogin:Font, S8, Segoe UI
-	Gui, BNetLogin:Add, Text,% "x" leftMost+5 " y" downMost-50 " hwndhTEXT_WhyMissing 0x0100",Why is x game missing?
-	AddToolTip(hTEXT_WhyMissing, "Games are ran using the battlenet://GameID command."
-	.							 "`nWhen a game is missing, that means I do not know its GameID."
-	.							 "`nIf you happen to know any, please let me know!"
-	.							 "`n"
-	.							 "`nDiablo 3: " A_Tab A_Tab A_Tab "D3"
-	.							 "`nHeroes of the Storm: " A_Tab A_Tab "Hero / heroes"
-	.							 "`nHearthstone: " A_Tab A_Tab A_Tab  "WTCG"
-	.							 "`nOverwatch: " A_Tab A_Tab A_Tab "Pro"
-	.							 "`nStarCraft 2: " A_Tab A_Tab A_Tab "starcraft"
-	.							 "`nWorld of Warcraft: " A_Tab A_Tab "WoW"
-	.							 "`n"
-	.							 "`nDestiny 2: " A_Tab A_Tab A_Tab "???"
-	.							 "`nStarCraft Remastered: " A_Tab A_Tab "???")
-	coords := Get_Control_Coords("BNetLogin", hTEXT_WhyMissing)
-	GuiControl, BNetLogin:Move,% hTEXT_WhyMissing,% "x" rightMost-coords.W " y" downMost-30-coords.H
-	Gui, BNetLogin:Font, S10, Segoe UI
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -355,7 +351,7 @@ GUI_BNetLogin() {
 	; GUI_BNetLogin_OnTabSelect(hBTN_TabSettings)
 	Gui, BNetLogin:Show, w%guiShowWidth% h%guiShowHeight%,% ProgramValues.Name
 	WinWait ahk_id %hGUIBNetLogin%
-	WinWaitClose ahk_id %hGUIBNetLogin%
+	; WinWaitClose ahk_id %hGUIBNetLogin%
 	Return
 
 	GUI_BNetLogin_OnCBToggle:
@@ -365,11 +361,12 @@ GUI_BNetLogin() {
 	GUI_BNetLogin_Login:
 		GUI_BNetLogin_Login_Func()
 	Return
-
-	GUI_BNetLogin_Close:
-	;	The user closed the menu from its start bar icon
-		ExitApp
 	Return
+}
+
+GUI_BNetLogin_Close() {
+	Gui, BNetLogin:Destroy
+	ExitApp
 }
 
 GUI_BNetLogin_OnUpdateCheck(CtrlHwnd) {
@@ -422,6 +419,12 @@ GUI_BNetLogin_AddAccount() {
 	InputBox, email, Adding an account,Remember to tick the "Keep me logged in" case if you want to log in automatically without inputting your password.`n`nInput the new account's email:, , 400, 180
 	if (!ErrorLevel && Is_Email(email)) {
 		accNames := Parse_BNet_Config("SavedAccountNames")
+		if email in %accNames%
+		{
+			MsgBox,4096,% ProgramValues.Name,%email% is already in the list!
+			GUI_BNetLogin_AddAccount()
+			Return
+		}
 		Set_BNet_Config("SavedAccountNames", accNames "," email)
 
 		GUI_BNetLogin_SaveSettings()
@@ -573,7 +576,7 @@ GUI_BNetLogin_Login_Func(_user="NULL", _game="NULL") {
 	Set_BNet_Login(user)
 	BNet_Run(game)
 
-	Gui, BNetLogin:Destroy
+	GUI_BNetLogin_Close()
 }
 
 GUI_BNetLogin_OnGameSelect(CtrlHwnd) {
@@ -695,11 +698,18 @@ BNet_Close() {
 Get_Game_ID(which) {
 ;	Game IDs used by the battlenet:// parameter
 ;	HotS can use both "Hero" and "heroes"
-	allGameIDS := {Overwatch:"Pro",Diablo_3:"D3",StarCraft_2:"starcraft",World_of_Warcraft:"WoW",Heroes_of_the_Storm:"Hero",Hearthstone:"WTCG"}
+	allGameIDS := {	Destiny_2:"DST2"
+					,Diablo_3:"D3"
+					,Hearthstone:"WTCG"
+					,Heroes_of_the_Storm:"Hero"
+					,Overwatch:"Pro"
+					,StarCraft_2:"starcraft"
+					,StarCraft_Remastered:"SCR"
+					,World_of_Warcraft:"WoW"}
 
-	if (which = "All")
+	if (which = "all")
 		return allGameIDS
-
+  
 	which := StrReplace(which, A_Space, "_")
 	gameID := allGameIDS[which]
 	Return gameID

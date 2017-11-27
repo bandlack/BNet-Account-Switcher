@@ -22,10 +22,12 @@ FileInstall, resources\icon.ico,% ProgramValues.Resources_Folder "\icon.ico", 1
 ; \resources\games_icons\
 if !( InStr(FileExist(ProgramValues.Game_Icons_Folder), "D") )
 	FileCreateDir,% ProgramValues.Game_Icons_Folder 
+FileInstall, resources\games_icons\Destiny_2.png,% ProgramValues.Game_Icons_Folder "\Destiny_2.png", 1
 FileInstall, resources\games_icons\Diablo_3.png,% ProgramValues.Game_Icons_Folder "\Diablo_3.png", 1
 FileInstall, resources\games_icons\Hearthstone.png,% ProgramValues.Game_Icons_Folder "\Hearthstone.png", 1
 FileInstall, resources\games_icons\Heroes_of_the_Storm.png,% ProgramValues.Game_Icons_Folder "\Heroes_of_the_Storm.png", 1
 FileInstall, resources\games_icons\Overwatch.png,% ProgramValues.Game_Icons_Folder "\Overwatch.png", 1
 FileInstall, resources\games_icons\StarCraft_2.png,% ProgramValues.Game_Icons_Folder "\StarCraft_2.png", 1
+FileInstall, resources\games_icons\StarCraft_Remastered.png,% ProgramValues.Game_Icons_Folder "\StarCraft_Remastered.png", 1
 FileInstall, resources\games_icons\World_of_Warcraft.png,% ProgramValues.Game_Icons_Folder "\World_of_Warcraft.png", 1
 
