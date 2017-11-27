@@ -1,11 +1,11 @@
 -----------------------
-v0.3.1 (27 Dec 2017)
+v0.3.1 (27 Nov 2017)
 
 	Fixes:
 	- Some interactions with the auto-updater.
 
 -----------------------
-v0.3 (27 Dec 2017)
+v0.3 (27 Nov 2017)
 
 	Added:
 	- Compatibility for Destiny 2 and StarCraft Remastered.
@@ -15,19 +15,19 @@ v0.3 (27 Dec 2017)
 	- The version text in the Opts tab could be wrongly positioned under specific circumstance.
 	
 -----------------------
-v0.2.2 (25 Dec 2017)
+v0.2.2 (25 Nov 2017)
 
 	Fixes:
 	- Typo fix in the "Remove selected account" message box.
 	
 -----------------------
-v0.2.1 (25 Dec 2017)
+v0.2.1 (25 Nov 2017)
 
 	Changes:
 	- The auto-updater executable would not be deleted after updating.
 	
 -----------------------
-v0.2 (25 Dec 2017)
+v0.2 (25 Nov 2017)
 
 	Changes:
 	- New icon for the application.
@@ -36,7 +36,7 @@ v0.2 (25 Dec 2017)
 	- User could choose "Remove selected account" without any account selected.
 	
 -----------------------
-v0.1.2 (22 Dec 2017)
+v0.1.2 (22 Nov 2017)
 
 	Added:
 	- Reddit text link URL.
@@ -45,7 +45,7 @@ v0.1.2 (22 Dec 2017)
 	- Removed Blizzard text link.
 	
 -----------------------
-v0.1.1 (22 Dec 2017):
+v0.1.1 (22 Nov 2017):
 
 	Added:
 	- Current version num in the Opts tab.
@@ -57,5 +57,5 @@ v0.1.1 (22 Dec 2017):
 	- Update checking would not work as it should.
 
 -----------------------
-v0.1 (22 Dec 2017):
+v0.1 (22 Nov 2017):
 	- Initially published on Github.
