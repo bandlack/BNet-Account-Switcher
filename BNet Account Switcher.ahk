@@ -56,7 +56,7 @@ Start_Script() {
 	global BNetSettingsRegEx := {}
 
 	ProgramValues.Name 					:= "BNet Account Switcher"
-	ProgramValues.Version 				:= "0.3.1"
+	ProgramValues.Version 				:= "0.3.2"
 	ProgramValues.Branch 				:= "master"
 	ProgramValues.Github_User 			:= "lemasato"
 	ProgramValues.GitHub_Repo 			:= "BNet-Account-Switcher"
@@ -247,6 +247,7 @@ GUI_BNetLogin() {
 	gameName := gameID :=
 
 		; Loop through the icon files
+	gameIconsNum := 0
 	Loop, Files,% ProgramValues.Game_Icons_Folder "\*.png"
 	{
 		SplitPath, A_LoopFileName, , , , fileNameNoExt

@@ -1,4 +1,10 @@
 -----------------------
+v0.3.2 (27 Nov 2017)
+
+	Fixes:
+	- The second row of icons would not be centered under specific circumstances.
+	
+-----------------------
 v0.3.1 (27 Nov 2017)
 
 	Fixes:
@@ -12,7 +18,7 @@ v0.3 (27 Nov 2017)
 	
 	Fixes:
 	- The "Accounts" tab would not be highlighted after successfully adding an account through the "Add an account" menu item.
-	- The version text in the Opts tab could be wrongly positioned under specific circumstance.
+	- The version text in the Opts tab could be wrongly positioned under specific circumstances.
 	
 -----------------------
 v0.2.2 (25 Nov 2017)
