@@ -97,7 +97,7 @@ Start_Script() {
 	}
 ;	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-	FileDelete,% Updater_File
+	FileDelete,% ProgramValues.Updater_File
 ;	Startup
 	Tray_Refresh()
 	Extract_Assets()
