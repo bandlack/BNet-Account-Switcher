@@ -56,7 +56,7 @@ Start_Script() {
 	global BNetSettingsRegEx := {}
 
 	ProgramValues.Name 					:= "BNet Account Switcher"
-	ProgramValues.Version 				:= "0.3"
+	ProgramValues.Version 				:= "0.3.1"
 	ProgramValues.Branch 				:= "master"
 	ProgramValues.Github_User 			:= "lemasato"
 	ProgramValues.GitHub_Repo 			:= "BNet-Account-Switcher"
@@ -97,6 +97,7 @@ Start_Script() {
 	}
 ;	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+	FileDelete,% Updater_File
 ;	Startup
 	Tray_Refresh()
 	Extract_Assets()
@@ -847,6 +848,10 @@ Create_Local_File() {
 			EnvAdd, currentValue, 1, Seconds
 			if !(currentValue) || (currentValue = 1)
 				currentValue := "ERROR"
+		}
+		if iniKey in FileName,PID ; These values are instance specific
+		{
+			currentValue := "ERROR"
 		}
 		if (currentValue = "ERROR") {
 			Set_Local_Config(sect, iniKey, iniValue)
