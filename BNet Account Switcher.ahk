@@ -56,8 +56,7 @@ Start_Script() {
 	global BNetSettingsRegEx := {}
 
 	ProgramValues.Name 					:= "BNet Account Switcher"
-	ProgramValues.Version 				:= "0.3.2"
-	ProgramValues.Branch 				:= "master"
+	ProgramValues.Version 				:= "0.3.3"
 	ProgramValues.Github_User 			:= "lemasato"
 	ProgramValues.GitHub_Repo 			:= "BNet-Account-Switcher"
 
@@ -860,7 +859,8 @@ Create_Local_File() {
 	}
 
 	sect := "SETTINGS"
-	keysAndValues := { 	Launcher:""""""
+	keysAndValues := { 	Auto_Update:1
+						,Launcher:""""""
 						,Disable_AutoStart:"0"}
 
 	for iniKey, iniValue in keysAndValues {
@@ -1007,6 +1007,7 @@ SplashTextOff() {
 UpdateCheck(force=false, prompt=false) {
 	global ProgramValues, SPACEBAR_WAIT
 
+	autoupdate := Get_Local_Config("SETTINGS", "Auto_Update")
 	lastUpdateCheck := Get_Local_Config("PROGRAM", "Last_Update_Check")
 	if (force) ; Fake the last update check, so it's higher than 35mins
 		lastUpdateCheck := 1994042612310000
@@ -1033,7 +1034,12 @@ UpdateCheck(force=false, prompt=false) {
 			.											"`nYou can find the GitHub repository link in the ""Opts"" tab.", 1, 1)
 		}
 		else if (onlineVer && onlineDownload) && (onlineVer != ProgramValues.Version) {
-			ShowUpdatePrompt(onlineVer, onlineDownload)
+			if (autoupdate) {
+				FileDownload(ProgramValues.Updater_Link, ProgramValues.Updater_File)
+				Run_Updater(onlineDownload)
+			}
+			Else
+				ShowUpdatePrompt(onlineVer, onlineDownload)
 			Return
 		}
 	}

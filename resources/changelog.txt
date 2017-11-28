@@ -1,4 +1,11 @@
 -----------------------
+v0.3.3 (28 Nov 2017)
+	
+	Changes:
+	- Removed the yes/no update box. Updating is now instant.
+	This can be disabled by setting the Auto_Update value to 0 in the local ini file.
+
+-----------------------
 v0.3.2 (27 Nov 2017)
 
 	Fixes:
